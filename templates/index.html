@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask + SQLAlchemy TO-Do App</title>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form action="/add" method="POST">
+        <input type="text" name="task" placeholder="Enter a new task" required>
+        <button type="submit">Add Task</button>
+    </form>
+    <br
+
+    <a href="/">Show All Tasks</a> |
+    <a href="/?filter=completed">Show Completed Tasks</a> |
+    <a href="/?filter=uncompleted">Show Uncompleted Tasks</a>
+
+
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }}
+               [Completed: {{ 'Yes' if task.completed else 'No' }}]
+
+               <a href="/toggle/{{ task.id }}">
+            {% if task.completed %}
+                Mark Uncompleted
+            {% else %}
+                Mark Completed
+            {% endif %}
+                </a>
+               <a href="/delete/{{ task.id }}">Delete</a>
+            
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
