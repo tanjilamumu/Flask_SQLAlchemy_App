@@ -19,6 +19,7 @@ class Task(db.Model):
     title = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Boolean, default=False)
 
+
 with app.app_context():
     db.create_all()
 
@@ -83,6 +84,20 @@ def delete_task(task_id):
         db.session.delete(task)
         db.session.commit()
     return redirect('/')
+
+@app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
+    if 'user' not in session:
+        return redirect('/login')
+
+    task = Task.query.get(task_id)
+    if request.method == 'POST':
+        new_title = request.form.get('task')
+        if task and new_title:
+            task.title = new_title
+            db.session.commit()
+            return redirect('/')
+    return render_template('edit.html', task=task)
 
 
 @app.route('/toggle/<int:task_id>')
