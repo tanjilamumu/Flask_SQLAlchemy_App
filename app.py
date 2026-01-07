@@ -1,8 +1,14 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import os
+import boto3
+import logging
+
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
+
 
 # SECRET KEY for login session
 app.config['SECRET_KEY'] = 'secret123'
@@ -11,6 +17,19 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:abc12345.@database-1.c7224ew0aex5.us-east-2.rds.amazonaws.com/tasks'
 
 db = SQLAlchemy(app)
+
+BUCKET_NAME = 'flask-sqlalchemy-s3'
+
+def upload_file_to_s3(file_path, file_name):
+    s3 = boto3.client('s3')
+    try:
+        s3.upload_file(file_path, BUCKET_NAME, file_name)
+        logging.info(f"File {file_name} uploaded to S3 bucket {BUCKET_NAME}")
+    except Exception as e:
+        logging.error(f"Error uploading file to S3: {e}")
+        return None
+    
+
 
 # ------------------ MODEL ------------------
 class Task(db.Model):
@@ -69,6 +88,15 @@ def add_task():
     task = request.form.get('task')
     if task:
         new_task = Task(title=task)
+        file= request.files['file']
+        if file:
+            logging.info(f"Received file: {file.filename}")
+            file_path = os.path.join(basedir, file.filename)
+            file.save(file_path)
+            upload_file_to_s3(file_path, file.filename)
+            os.remove(file_path)
+
+
         db.session.add(new_task)
         db.session.commit()
     return redirect('/')
