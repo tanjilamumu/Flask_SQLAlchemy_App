@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret123'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'tasks.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:abc12345.@database-1.c7224ew0aex5.us-east-2.rds.amazonaws.com/tasks'
 
 db = SQLAlchemy(app)
 
@@ -114,4 +114,4 @@ def toggle_task(task_id):
 
 # ------------------ RUN ------------------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
