@@ -31,8 +31,17 @@ def upload_file_to_s3(file_path, file_name):
         logging.error(f"Error uploading file to S3: {e}")
         return None
 
+def get_db_secret(secret_name, region_name='us-east-2'):
+    client = boto3.client('secretsmanager', region_name=region_name)
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = get_secret_value_response['SecretString']
+        return json.loads(secret)
+    except Exception as e:
+        logging.error(f"Error retrieving secret {secret_name}: {e}")
+        return None
     
-
+    
 
 # ------------------ MODEL ------------------
 class Task(db.Model):
@@ -40,10 +49,10 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    s3_uri = db.Column(db.String(500) , nullable=True)  # S3 URI for the uploaded file
+    s3_url = db.Column(db.String(500) , nullable=True)  # S3 URI for the uploaded file
 
-#with app.app_context():
-   # db.create_all()
+with app.app_context():
+   db.create_all()
 
 # ------------------ AUTH ------------------
 @app.route('/login', methods=['GET', 'POST'])
@@ -87,15 +96,17 @@ def home():
 def add_task():
     task = request.form.get('task')
     new_task = Task(title=task)
-    file = request.files('file')
+    file = request.files.get('file')
 
     if file:
         logging.info(f"Received file: {file.filename}")
         file_path = os.path.join(basedir, file.filename)
         file.save(file_path)
+
+        
         upload_file_to_s3(file_path, file.filename)
         os.remove(file_path)  # Clean up the local file after upload
-        new_task.s3_uri = f"s3://{BUCKET_NAME}/{file.filename}"
+        new_task.s3_url = f"s3://{BUCKET_NAME}/{file.filename}"
 
         db.session.add(new_task)
         db.session.commit()

@@ -35,9 +35,9 @@
                <a href="/delete/{{ task.id }}">Delete</a>
                <a href="/edit/{{ task.id }}">Edit</a>
 
-               {% if task.uri %}
-  <a href="{{ task.url }}" target="_blank">View Attachment</a>
-{% endif %}
+               {% if task.s3_url %}
+                <a href="{{ task.s3_url }}" target="_blank">View Attachment</a>
+                {% endif %}
             
             </li>
         {% endfor %}
