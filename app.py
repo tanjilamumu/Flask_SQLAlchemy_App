@@ -25,9 +25,12 @@ def upload_file_to_s3(file_path, file_name):
     try:
         s3.upload_file(file_path, BUCKET_NAME, file_name)
         logging.info(f"File {file_name} uploaded to S3 bucket {BUCKET_NAME}")
+        # RETURN the S3 URI
+        return f"s3://{BUCKET_NAME}/{file_name}"
     except Exception as e:
         logging.error(f"Error uploading file to S3: {e}")
         return None
+
     
 
 
@@ -37,10 +40,10 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Boolean, default=False)
+    s3_uri = db.Column(db.String(500) , nullable=True)  # S3 URI for the uploaded file
 
-
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+   # db.create_all()
 
 # ------------------ AUTH ------------------
 @app.route('/login', methods=['GET', 'POST'])
@@ -77,29 +80,29 @@ def home():
     else:
         tasks = Task.query.all()
 
-    return render_template('index.html', tasks=tasks)
+    return render_template('index.html', tasks=tasks, BUCKET_NAME=BUCKET_NAME)
 
 
 @app.route('/add', methods=['POST'])
 def add_task():
-    if 'user' not in session:
-        return redirect('/login')
-
     task = request.form.get('task')
-    if task:
-        new_task = Task(title=task)
-        file= request.files['file']
-        if file:
-            logging.info(f"Received file: {file.filename}")
-            file_path = os.path.join(basedir, file.filename)
-            file.save(file_path)
-            upload_file_to_s3(file_path, file.filename)
-            os.remove(file_path)
+    new_task = Task(title=task)
+    file = request.files('file')
 
+    if file:
+        logging.info(f"Received file: {file.filename}")
+        file_path = os.path.join(basedir, file.filename)
+        file.save(file_path)
+        upload_file_to_s3(file_path, file.filename)
+        os.remove(file_path)  # Clean up the local file after upload
+        new_task.s3_uri = f"s3://{BUCKET_NAME}/{file.filename}"
 
         db.session.add(new_task)
         db.session.commit()
+
     return redirect('/')
+
+
 
 
 @app.route('/delete/<int:task_id>')
