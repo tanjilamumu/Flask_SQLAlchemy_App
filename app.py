@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, json, request, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import os
 import boto3
@@ -10,12 +10,26 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-# SECRET KEY for login session
+# SECRET KEY for login session hjh
 app.config['SECRET_KEY'] = 'secret123'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:abc12345.@database-1.c7224ew0aex5.us-east-2.rds.amazonaws.com/tasks'
+db_name = 'tasks.db'
 
+def get_db_secret(secret_name, region_name='us-east-2'):
+    client = boto3.client('secretsmanager', region_name=region_name)
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = get_secret_value_response['SecretString']
+        return json.loads(secret)
+    except Exception as e:
+        logging.error(f"Error retrieving secret {secret_name}: {e}")
+        return None
+    
+    
+secret = get_db_secret('prod/rds/mydb')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{secret['username']}:{secret['password']}@{secret['host']}/{secret['dbname']}"
 db = SQLAlchemy(app)
 
 BUCKET_NAME = 'flask-sqlalchemy-s3'
@@ -31,17 +45,7 @@ def upload_file_to_s3(file_path, file_name):
         logging.error(f"Error uploading file to S3: {e}")
         return None
 
-def get_db_secret(secret_name, region_name='us-east-2'):
-    client = boto3.client('secretsmanager', region_name=region_name)
-    try:
-        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-        secret = get_secret_value_response['SecretString']
-        return json.loads(secret)
-    except Exception as e:
-        logging.error(f"Error retrieving secret {secret_name}: {e}")
-        return None
-    
-    
+
 
 # ------------------ MODEL ------------------
 class Task(db.Model):
