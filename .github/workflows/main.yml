@@ -27,11 +27,11 @@ jobs:
         source: "*"
         target: "/home/tmumu/Flask_SQLAlchemy_App"
 
-    - name: SSH and Restart app.py
+    - name: SSH and start App
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
-        username: ec2-user
+        username: tmumu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/tmumu/Flask_SQLAlchemy_App
