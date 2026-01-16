@@ -1,0 +1,14 @@
+nohup: ignoring input
+INFO:botocore.credentials:Found credentials from IAM Role: EC2SecretsManagerAccessRole
+ * Serving Flask app 'app'
+ * Debug mode: on
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.47.131:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:botocore.credentials:Found credentials from IAM Role: EC2SecretsManagerAccessRole
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 386-337-775
+INFO:werkzeug:69.116.61.146 - - [09/Jan/2026 05:43:29] "GET / HTTP/1.1" 200 -

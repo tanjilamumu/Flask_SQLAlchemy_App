@@ -95,7 +95,8 @@ def home():
 
     return render_template('index.html', tasks=tasks, BUCKET_NAME=BUCKET_NAME)
 
-#add task
+
+#add task route
 @app.route('/add', methods=['POST'])
 def add_task():
     task = request.form.get('task')
@@ -118,8 +119,7 @@ def add_task():
     return redirect('/')
 
 
-
-#delete task
+#Delete task route
 @app.route('/delete/<int:task_id>')
 def delete_task(task_id):
     if 'user' not in session:
