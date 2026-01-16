@@ -1,0 +1,105 @@
+/* ---------- GLOBAL ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
+  padding: 40px;
+}
+
+/* ---------- HEADINGS ---------- */
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+/* ---------- CONTAINER ---------- */
+form {
+  background: #fff;
+  max-width: 500px;
+  margin: 0 auto 20px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- INPUTS ---------- */
+input[type="text"],
+input[type="password"],
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+/* ---------- LINKS ---------- */
+a {
+  color: #3498db;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- TASK LIST ---------- */
+ul {
+  max-width: 700px;
+  margin: 0 auto;
+  list-style: none;
+}
+
+li {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- TASK STATUS ---------- */
+li span {
+  font-weight: bold;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
+/* ---------- FILTER LINKS ---------- */
+.filters {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ---------- LOGIN ---------- */
+.login-container {
+  max-width: 400px;
+  margin: 80px auto;
+}
